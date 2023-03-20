@@ -99,12 +99,8 @@ export default function Album() {
                 >
                   <CardMedia
                     component="img"
-                    sx={{
-                      // 16:9
-                      pt: '56.25%',
-                    }}
                     image={card.imagem || card.gallery[0]}
-                    alt="random"
+                    alt={ card.nome || card.name }
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
@@ -114,7 +110,7 @@ export default function Album() {
                       { card.descricao || card.description }
                     </Typography>
                   </CardContent>
-                  <CardActions>
+                  <CardActions sx={{ justifyContent: "center" }}>
                     <Button size="small">Adicionar ao carrinho</Button>
                   </CardActions>
                 </Card>
