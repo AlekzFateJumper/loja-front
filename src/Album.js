@@ -27,7 +27,7 @@ export default function Album() {
   const [filtered, setFiltered] = useState([]);
 
   const filter = function(s) {
-      if(typeof s == 'undefined' || s == '' || !s){
+      if(typeof s === 'undefined' || s === '' || !s){
         setFiltered(products);
       }else{
         setFiltered(products.filter(
