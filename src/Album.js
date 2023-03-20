@@ -50,7 +50,7 @@ export default function Album() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="relative">
+      <AppBar>
         <Toolbar>
           <Grid container>
             <Grid xs={6} sx={{ display: "flex", justifyContent: "flex-start" }}>
@@ -70,7 +70,7 @@ export default function Album() {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 8,
+            pt: 15,
             pb: 2,
           }}
         >
@@ -90,7 +90,6 @@ export default function Album() {
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
-          {/* End hero unit */}
           <Grid container spacing={4}>
             {filtered.map((card) => (
               <Grid item key={card.fornecedor + '-' + card.id} xs={12} sm={6} md={4}>
