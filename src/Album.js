@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 import Search from './Search.js';
 
 
@@ -23,8 +23,10 @@ function Copyright() {
 const theme = createTheme();
 
 export default function Album() {
-  const [products, setProducts] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [products, setProducts] = React.useState([]);
+  const [filtered, setFiltered] = React.useState([]);
+
+  const cookies = new Cookies();
 
   const filter = function(s) {
       if(typeof s === 'undefined' || s === '' || !s){
@@ -36,7 +38,7 @@ export default function Album() {
       }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function fetchData() {
       const result = await axios(
         process.env.REACT_APP_API + 'produtos',
@@ -47,19 +49,21 @@ export default function Album() {
     fetchData();
   }, []);
 
+  console.log('Cart:', cookies.get('cart'));
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppBar>
         <Toolbar>
           <Grid container>
-            <Grid xs={6} sx={{ display: "flex", justifyContent: "flex-start" }}>
+            <Grid item={true} xs={6} sx={{ display: "flex", justifyContent: "flex-start" }}>
               <StoreIcon sx={{ mr: 2, mt: .5 }} />
               <Typography variant="h6" color="inherit" noWrap>
                 Loja imaginária
               </Typography>
             </Grid>
-            <Grid xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Grid item={true} xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Search onChange={ filter } />
             </Grid>
           </Grid>
