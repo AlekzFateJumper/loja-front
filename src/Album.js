@@ -1,29 +1,19 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link } from '@mui/material';
+import StoreIcon from '@mui/icons-material/Store';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import debounce from 'lodash.debounce';
+import Search from './Search.js';
 
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        Loja imaginária
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -35,6 +25,17 @@ const theme = createTheme();
 
 export default function Album() {
   const [products, setProducts] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+
+  const filter = function(s) {
+      if(typeof s == 'undefined' || s == '' || !s){
+        setFiltered(products);
+      }else{
+        setFiltered(products.filter(
+          (i) => (i.nome + ' ' + i.name + ' ' + i.descricao + i.description).toLowerCase().indexOf(s.toLowerCase()) > -1
+        ));
+      }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -42,7 +43,7 @@ export default function Album() {
         process.env.REACT_APP_API + 'produtos',
       );
       setProducts(result.data);
-      // console.log(result.data);
+      setFiltered(result.data);
     }
     fetchData();
   }, []);
@@ -52,10 +53,17 @@ export default function Album() {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <CameraIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Loja imaginária
-          </Typography>
+          <Grid container>
+            <Grid xs={6} sx={{ display: "flex", justifyContent: "flex-start" }}>
+              <StoreIcon sx={{ mr: 2, mt: .5 }} />
+              <Typography variant="h6" color="inherit" noWrap>
+                Loja imaginária
+              </Typography>
+            </Grid>
+            <Grid xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Search onChange={ filter } />
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       <main>
@@ -85,7 +93,7 @@ export default function Album() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {products.map((card) => (
+            {filtered.map((card) => (
               <Grid item key={card.fornecedor + '-' + card.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -118,17 +126,6 @@ export default function Album() {
       </main>
       {/* Footer */}
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
         <Copyright />
       </Box>
       {/* End footer */}
