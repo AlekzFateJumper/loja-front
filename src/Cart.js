@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Card, CardHeader, CardContent, List, ListItem, ListItemText, ListItemButton, IconButton } from '@mui/material';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import axios from 'axios';
 
 export default function Cart({ data, add, remove }) {
   const [itens, setItens] = React.useState([]);
+  const [cache, setCache] = React.useState([]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -42,20 +44,17 @@ export default function Cart({ data, add, remove }) {
         position: 'relative',
         overflow: 'auto',
       }}>
-        {itens.map( (item) => (
+        {itens.map( (item, index) => (
           <ListItem
-            key={value}
+            key={item.fornecedor+'-'+item.id}
             secondaryAction={
-              <IconButton edge="end" aria-label="remove">
-                <DeleteIcon />
+              <IconButton edge="end" aria-label="remove" onClick={(e) => { remove(index) } }>
+                <DeleteForeverIcon />
               </IconButton>
             }
             disablePadding
           >
-              <ListItemButton edge="start" />
-              <ListItemText edge="start" primary={item.qtd || item.qtd} />
-              <ListItemButton edge="start" />
-              <ListItemText primary={item.nome || item.name} />
+              <ListItemText primary={(item.qtd || item.qtd) + ' - ' + (item.nome || item.name)} />
           </ListItem>
         ))}
       </List>

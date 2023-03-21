@@ -79,6 +79,12 @@ export default function Album() {
     cookies.set('cart', mCart);
   }
 
+  const removeByIndex = function(i){
+    let mCart = cart.slice();
+    mCart.splice(i,1);
+    cookies.set('cart', mCart);
+  }
+
   React.useEffect(() => {
     async function fetchData() {
       const result = await axios(
@@ -179,7 +185,7 @@ export default function Album() {
       {/* End footer */}
       {/* Modals */}
       <Modal open={showCart} onClose={()=>{setShowCart(false)}}>
-        <Cart data={cart} add={addToCart} remove={removeFromCart} />
+        <Cart data={cart} add={addToCart} remove={removeByIndex} />
       </Modal>
     </ThemeProvider>
   );
