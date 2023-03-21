@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link, Badge, IconButton } from '@mui/material';
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link, Badge, IconButton, Modal } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
 import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -27,7 +27,15 @@ export default function Album() {
   const [products, setProducts] = React.useState([]);
   const [filtered, setFiltered] = React.useState([]);
 
+  const cookieChanged = function(e){
+    if(e.name === "cart"){
+      setCart(JSON.parse(e.value));
+    }
+  }
+
   const cookies = new Cookies();
+  cookies.addChangeListener(cookieChanged);
+  const [cart, setCart] = React.useState(cookies.get('cart') || []);
 
   const filter = function(s) {
       if(typeof s === 'undefined' || s === '' || !s){
@@ -39,6 +47,22 @@ export default function Album() {
       }
   };
 
+  const addToCart = function(fid, pid){
+    let mCart = cart.slice();
+    let novo = true;
+    for(let i = 0; i < mCart.length; i++){
+      if(mCart[i][0] === fid && mCart[i][1] === parseInt(pid)){
+        mCart[i][2]++;
+        novo = false;
+        break;
+      }
+    }
+    if(novo){
+      mCart.push([fid,parseInt(pid),1])
+    }
+    cookies.set('cart', mCart);
+  }
+
   React.useEffect(() => {
     async function fetchData() {
       const result = await axios(
@@ -49,8 +73,6 @@ export default function Album() {
     }
     fetchData();
   }, []);
-
-  const cart = JSON.parse(cookies.get('cart') || '[]');
 
   return (
     <ThemeProvider theme={theme}>
@@ -67,11 +89,12 @@ export default function Album() {
             <Grid item={true} xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Search onChange={ filter } />
               <IconButton>
-                <CartIcon sx={{ ml: 2, mt: .6, color: "#FFF" }} />
+                <CartIcon sx={{ color: "#FFF" }} />
                 <Badge
-                  anchorOrigin={{ vertical: "bottom" }}
-                  badgeContent={"0"}
-                  color={"info"}
+                  sx={{ mt: 3 }}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={cart.length}
+                  color={"secondary"}
                 />
               </IconButton>
             </Grid>
@@ -123,7 +146,9 @@ export default function Album() {
                     </Typography>
                   </CardContent>
                   <CardActions sx={{ justifyContent: "center" }}>
-                    <Button size="small">Adicionar ao carrinho</Button>
+                    <Button size="small" onClick={(e)=>{
+                      addToCart(card.fornecedor,card.id);
+                    }}>Adicionar ao carrinho</Button>
                   </CardActions>
                 </Card>
               </Grid>
