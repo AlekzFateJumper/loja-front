@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link } from '@mui/material';
+import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Box, Toolbar, Typography, Container, Link, Badge, IconButton } from '@mui/material';
 import StoreIcon from '@mui/icons-material/Store';
+import CartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -49,7 +50,7 @@ export default function Album() {
     fetchData();
   }, []);
 
-  console.log('Cart:', cookies.get('cart'));
+  const cart = JSON.parse(cookies.get('cart') || '[]');
 
   return (
     <ThemeProvider theme={theme}>
@@ -65,6 +66,14 @@ export default function Album() {
             </Grid>
             <Grid item={true} xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Search onChange={ filter } />
+              <IconButton>
+                <CartIcon sx={{ ml: 2, mt: .6, color: "#FFF" }} />
+                <Badge
+                  anchorOrigin={{ vertical: "bottom" }}
+                  badgeContent={"0"}
+                  color={"info"}
+                />
+              </IconButton>
             </Grid>
           </Grid>
         </Toolbar>
