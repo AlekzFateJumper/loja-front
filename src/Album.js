@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import Search from './Search.js';
+import Cart from './Cart.js';
 
 
 function Copyright() {
@@ -26,6 +27,7 @@ const theme = createTheme();
 export default function Album() {
   const [products, setProducts] = React.useState([]);
   const [filtered, setFiltered] = React.useState([]);
+  const [showCart, setShowCart] = React.useState(false);
 
   const cookieChanged = function(e){
     if(e.name === "cart"){
@@ -63,6 +65,20 @@ export default function Album() {
     cookies.set('cart', mCart);
   }
 
+  const removeFromCart = function(fid, pid, all){
+    all = all || false;
+    let mCart = cart.slice();
+    for(let i = 0; i < mCart.length; i++){
+      if(mCart[i][0] === fid && mCart[i][1] === parseInt(pid)){
+        if(all || --mCart[i][2] === 0){
+          mCart.splice(i,1);
+        }
+        break;
+      }
+    }
+    cookies.set('cart', mCart);
+  }
+
   React.useEffect(() => {
     async function fetchData() {
       const result = await axios(
@@ -88,7 +104,7 @@ export default function Album() {
             </Grid>
             <Grid item={true} xs={6}  sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Search onChange={ filter } />
-              <IconButton>
+              <IconButton onClick={()=>{setShowCart(true)}}>
                 <CartIcon sx={{ color: "#FFF" }} />
                 <Badge
                   sx={{ mt: 3 }}
@@ -161,6 +177,10 @@ export default function Album() {
         <Copyright />
       </Box>
       {/* End footer */}
+      {/* Modals */}
+      <Modal open={showCart} onClose={()=>{setShowCart(false)}}>
+        <Cart data={cart} add={addToCart} remove={removeFromCart} />
+      </Modal>
     </ThemeProvider>
   );
 }
